@@ -100,6 +100,8 @@ typedef enum {
  */
 - (void)loadDirectionsForOrigin:(LPLocation *)origin forDestination:(LPLocation *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString* errorMessage))failure;
 
+- (void)loadDirectionsForOriginFromAddress:(NSString *)origin forDestination:(NSString *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString* errorMessage))failure;
+
 /**
  * The Google Maps Image APIs make it easy to embed a street view image into your image view.
  * @param The location (such as 40.457375,-80.009353).
@@ -136,10 +138,6 @@ typedef enum {
  * @param Failure block with status.
  */
 - (void)loadStaticMapImageForLocation:(LPLocation *)location zoomLevel:(int)zoom imageSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype markersArray:(NSArray *)markers successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure;
-
-- (void)loadStaticMapImageForFromLocation:(LPLocation *)location toLocation:(LPLocation *)location zoomLevel:(int)zoom imageSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype markersArray:(NSArray *)markers path:(NSString *)path format:(NSString *)format successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure;
-
-- (void)loadStaticMapImageForFromLocation:(LPLocation *)location toLocation:(LPLocation *)location zoomLevel:(int)zoom imageSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype sourceMarker:(NSString *)sourceMarker destMarker:(NSString *)destMarker path:(NSString *)path format:(NSString *)format successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure;
 
 /**
  * The Google Maps Image APIs make it easy to embed a static Google Maps image into your image view.
@@ -245,6 +243,12 @@ typedef enum {
  */
 - (void)loadDistanceMatrixForOrigins:(NSArray *)origins forDestinations:(NSArray *)destinations directionsTravelMode:(LPGoogleDistanceMatrixTravelMode)travelMode directionsAvoidTolls:(LPGoogleDistanceMatrixAvoid)avoid directionsUnit:(LPGoogleDistanceMatrixUnit)unit departureTime:(NSDate *)departureTime successfulBlock:(void (^)(LPDistanceMatrix *distanceMatrix))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 
+- (void)loadStaticMapImageWithSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype sourceMarker:(NSString *)sourceMarker destMarker:(NSString *)destMarker path:(NSString *)path format:(NSString *)format successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure;
+
+- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(NSArray *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
+
+- (void)loadPlaceDetailsForPlaceID:(NSString *)placeID forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
+
 @end
 
 
@@ -256,6 +260,7 @@ typedef enum {
 
 #pragma mark - Directions
 - (void)googleFunctionsWillLoadDirections:(LPGoogleFunctions *)googleFunctions;
+- (void)googleFunctionsWillLoadDirectionsForAddress:(LPGoogleFunctions *)googleFunctions;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions didLoadDirections:(LPDirections *)directions;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions errorLoadingDirectionsWithStatus:(LPGoogleStatus)status;
 
@@ -268,6 +273,8 @@ typedef enum {
 - (void)googleFunctionsWillLoadPlaceDetailsResult:(LPGoogleFunctions *)googleFunctions forReference:(NSString *)reference;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions errorLoadingPlaceDetailsResultWithStatus:(LPGoogleStatus)status;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions didLoadPlaceDetailsResult:(LPPlaceDetailsResults *)placeDetailsResults;
+
+- (void)googleFunctionsWillLoadPlaceDetailsResult:(LPGoogleFunctions *)googleFunctions forPlaceID:(NSString *)placeID;
 
 #pragma mark - Geocoding
 - (void)googleFunctionsWillLoadGeocoding:(LPGoogleFunctions *)googleFunctions forAddress:(NSString *)address filterComponents:(NSArray *)filterComponents;
