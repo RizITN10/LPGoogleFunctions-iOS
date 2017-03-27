@@ -45,6 +45,7 @@ NSString *const STATUS_UNKNOWN_ERROR = @"UNKNOWN_ERROR";
 NSString *const googleAPIUri           = @"https://maps.googleapis.com";
 NSString *const googleAPIStreetViewImageURLPath = @"maps/api/streetview";
 NSString *const googleAPIPlacesAutocompleteURLPath = @"maps/api/place/autocomplete/json";
+NSString *const googleAPINearbySearchURLPath = @"maps/api/place/nearbysearch/json";
 NSString *const googleAPIPlaceDetailsURLPath = @"maps/api/place/details/json";
 NSString *const googleAPIGeocodingURLPath = @"maps/api/geocode/json";
 NSString *const googleAPIPlaceTextSearchURLPath = @"maps/api/place/textsearch/json";
@@ -52,6 +53,7 @@ NSString *const googleAPIPlacePhotoURLPath = @"maps/api/place/photo";
 NSString *const googleAPIDistanceMatrixURLPath = @"maps/api/distancematrix/json";
 NSString *const googleAPIDirectionsURLPath = @"maps/api/directions/json";
 NSString *const googleAPIStaticMapImageURLPath = @"maps/api/staticmap";
+
 
 NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/translate_tts?";
 
@@ -143,9 +145,15 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
 }
 
-- (NSString *)calculateSignatureForURLString:(NSString *)urlString {
+- (NSString *)calculateSignatureForURLString_ASSET:(NSString *)urlString {
     NSURL *url = [NSURL URLWithString:urlString];
     NSString *signature = [[LPURLSigner sharedManager] createSignatureWithHMAC_SHA1:[NSString stringWithFormat:@"%@?%@", [url path], [url query]] key:self.googleAPICryptoKey];
+    return signature;
+}
+
+- (NSString *)calculateSignatureForURLString_OEM_Places:(NSString *)urlString {
+    NSURL *url = [NSURL URLWithString:urlString];
+    NSString *signature = [[LPURLSigner sharedManager] createSignatureWithHMAC_SHA1:[NSString stringWithFormat:@"%@?%@", [url path], [url query]] key:self.googlePlacesAPICryptoKey];
     return signature;
 }
 
@@ -352,6 +360,87 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         
     }];
 }
+
+- (void)loadNearbyPlacesFor:(LPLocation *)origin radius:(NSString *)radius forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceSearchResults *placeSearchResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
+    
+    if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadNearbyPlaces:)]) {
+        [self.delegate googleFunctionsWillLoadNearbyPlaces:self];
+    }
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
+    
+    [parameters setObject:[NSString stringWithFormat:@"%f,%f", origin.latitude, origin.longitude] forKey:@"location"];
+    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    
+    if (radius) {
+        [parameters setObject:radius forKey:@"radius"];
+    }
+    else {
+        [parameters setObject:@"distance" forKey:@"rankby"];
+    }
+    
+    if (browserKey) {
+        [parameters setObject:[NSString stringWithFormat:@"%@", browserKey] forKey:@"key"];
+    }
+    //    else if (self.googleAPIBrowserKey) {
+    //        [parameters setObject:[NSString stringWithFormat:@"%@", self.googleAPIBrowserKey] forKey:@"key"];
+    //    }
+    //    else {
+    //        [parameters setObject:[NSString stringWithFormat:@"%@", self.googleAPIClientID] forKey:@"client"];
+    //    }
+    
+    NSMutableString *urlString = [NSMutableString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPINearbySearchURLPath];
+    for (NSString *key in parameters) {
+        [urlString appendString:[NSString stringWithFormat:@"%@=%@&", key, parameters[key]]];
+    }
+    
+    //    if (self.googleAPIBrowserKey) {
+    //        [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"key", [NSString stringWithFormat:@"%@", self.googleAPIBrowserKey]]];
+    //    }
+    //    else {
+    //        [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googlePlacesAPIClientID]]];
+    //        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_OEM_Places:urlString]]];
+    //    }
+    
+    
+    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        
+        LPPlaceSearchResults *placeSearchResults = [LPPlaceSearchResults placeSearchResultsWithObjects:responseObject];
+        
+        NSString *statusCode = placeSearchResults.statusCode;
+        
+        if ([statusCode isEqualToString:@"OK"]) {
+            if ([self.delegate respondsToSelector:@selector(googleFunctions:didLoadNearbyPlaces:)]) {
+                [self.delegate googleFunctions:self didLoadNearbyPlaces:placeSearchResults];
+            }
+            
+            if (successful)
+                successful(placeSearchResults);
+        } else {
+            LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:statusCode];
+            
+            if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingNearbyPlacesWithStatus:)]) {
+                [self.delegate googleFunctions:self errorLoadingNearbyPlacesWithStatus:status];
+            }
+            
+            if (failure)
+                failure(status);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingNearbyPlacesWithStatus:)]) {
+            [self.delegate googleFunctions:self errorLoadingNearbyPlacesWithStatus:LPGoogleStatusUnknownError];
+        }
+        
+        if (failure)
+            failure(LPGoogleStatusUnknownError);
+        
+    }];
+}
+
 
 - (void)loadPlaceDetailsForReference:(NSString *)reference successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
@@ -789,7 +878,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     else {
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
-        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString:urlString]]];
+        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -880,7 +969,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     else {
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
-        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString:urlString]]];
+        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -972,7 +1061,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     else {
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
-        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString:urlString]]];
+        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -1047,7 +1136,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     else {
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
-        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString:urlString]]];
+        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {

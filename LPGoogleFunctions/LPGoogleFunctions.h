@@ -77,6 +77,8 @@ typedef enum {
 @property (nonatomic, strong) NSString *googleAPIBrowserKey;
 @property (nonatomic, strong) NSString *googleAPIClientID;
 @property (nonatomic, strong) NSString *googleAPICryptoKey;
+@property (nonatomic, strong) NSString *googlePlacesAPIClientID;
+@property (nonatomic, strong) NSString *googlePlacesAPICryptoKey;
 
 + (instancetype)sharedInstance;
 
@@ -249,6 +251,8 @@ typedef enum {
 
 - (void)loadPlaceDetailsForPlaceID:(NSString *)placeID forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 
+- (void)loadNearbyPlacesFor:(LPLocation *)origin radius:(NSString *)radius forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceSearchResults *placeSearchResults))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure;
+
 @end
 
 
@@ -263,6 +267,11 @@ typedef enum {
 - (void)googleFunctionsWillLoadDirectionsForAddress:(LPGoogleFunctions *)googleFunctions;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions didLoadDirections:(LPDirections *)directions;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions errorLoadingDirectionsWithStatus:(LPGoogleStatus)status;
+
+#pragma mark - Nearby Search
+- (void)googleFunctionsWillLoadNearbyPlaces:(LPGoogleFunctions *)googleFunctions;
+- (void)googleFunctions:(LPGoogleFunctions *)googleFunctions didLoadNearbyPlaces:(LPDirections *)directions;
+- (void)googleFunctions:(LPGoogleFunctions *)googleFunctions errorLoadingNearbyPlacesWithStatus:(LPGoogleStatus)status;
 
 #pragma mark - Places Autocomplete
 - (void)googleFunctionsWillLoadPlacesAutocomplete:(LPGoogleFunctions *)googleFunctions forInput:(NSString *)input;
