@@ -930,8 +930,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     [parameters setObject:[NSString stringWithFormat:@"%f,%f", origin.latitude, origin.longitude] forKey:@"origin"];
     [parameters setObject:[NSString stringWithFormat:@"%f,%f", destination.latitude, destination.longitude] forKey:@"destination"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
+    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
     //    [parameters setObject:@"optimistic" forKey:@"traffic_model"];
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
@@ -941,7 +941,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", alternatives ? @"true" : @"false"] forKey:@"alternatives"];
     
     if (departureTime) {
-        [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
+        //        [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
+        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
     }
     
     if (arrivalTime) {
@@ -972,6 +973,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
+    
+    NSLog(@"URLString: %@", urlString);
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -1022,10 +1025,10 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     [parameters setObject:origin forKey:@"origin"];
     [parameters setObject:destination forKey:@"destination"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
+    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
-    //    [parameters setObject:@"optimistic" forKey:@"traffic_model"];
+    //        [parameters setObject:@"optimistic" forKey:@"traffic_model"];
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDirections getDirectionsAvoid:avoid] forKey:@"avoid"];
     }
@@ -1033,7 +1036,10 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", alternatives ? @"true" : @"false"] forKey:@"alternatives"];
     
     if (departureTime) {
-        [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
+        
+        //        NSLog(@"Milliseconds: %@, Seconds: %@", [NSString stringWithFormat:@"%lli", [@(floor([departureTime timeIntervalSince1970] * 1000)) longLongValue]], [NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]]);
+        //        [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
+        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
     }
     
     if (arrivalTime) {
@@ -1064,6 +1070,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
+    
+    NSLog(@"URLString: %@", urlString);
+    
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
