@@ -1045,18 +1045,30 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     if (arrivalTime) {
         [parameters setObject:[NSString stringWithFormat:@"%.0f", [arrivalTime timeIntervalSince1970]] forKey:@"arrival_time"];
     }
-    
+
     if (waypoints.count > 0) {
         NSString *waypointsString = @"";
         
         for (int i=0; i<[waypoints count]; i++) {
-            LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
+            NSString *waypoint = [waypoints objectAtIndex:i];
             
-            waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f|", waypoint.location.latitude, waypoint.location.longitude];
+            waypointsString = [waypointsString stringByAppendingFormat:@"%@", waypoint]; // @|
         }
         
         [parameters setObject:waypointsString forKey:@"waypoints"];
     }
+
+//    if (waypoints.count > 0) {
+//        NSString *waypointsString = @"";
+//        \
+//        for (int i=0; i<[waypoints count]; i++) {
+//            LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
+//            
+//            waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f|", waypoint.location.latitude, waypoint.location.longitude];
+//        }
+//        
+//        [parameters setObject:waypointsString forKey:@"waypoints"];
+//    }
     
     NSMutableString *urlString = [NSMutableString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIDirectionsURLPath];
     for (NSString *key in parameters) {
