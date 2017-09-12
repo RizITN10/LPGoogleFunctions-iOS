@@ -950,12 +950,19 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     
     if (waypoints.count > 0) {
+        
         NSString *waypointsString = @"";
         
         for (int i=0; i<[waypoints count]; i++) {
             LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
             
-            waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f|", waypoint.location.latitude, waypoint.location.longitude];
+            if (i < waypoints.count - 1) {
+                waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f%%7C", waypoint.location.latitude, waypoint.location.longitude];
+            } else {
+                
+                waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f", waypoint.location.latitude, waypoint.location.longitude];
+            }
+            
         }
         
         [parameters setObject:waypointsString forKey:@"waypoints"];
@@ -1054,6 +1061,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             
             waypointsString = [waypointsString stringByAppendingFormat:@"%@", waypoint]; // @|
         }
+        
+        waypointsString = [NSString stringWithFormat:@"via:%@", waypointsString];
         
         [parameters setObject:waypointsString forKey:@"waypoints"];
     }

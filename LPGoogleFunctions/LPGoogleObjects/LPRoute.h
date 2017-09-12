@@ -17,6 +17,10 @@
 @property (nonatomic, assign) int number;
 @property (nonatomic, strong) LPBounds *bounds;
 @property (nonatomic, strong) NSString *copyrights;
+@property (nonatomic, strong) NSArray *boundsArray;
+@property (nonatomic, strong) NSArray *durations;
+@property (nonatomic, strong) NSArray *durationsInTraffic;
+@property (nonatomic, strong) NSArray *startEndLocations;
 @property (nonatomic, strong) NSArray *legs;
 @property (nonatomic, strong) LPPolyline *overviewPolyline;
 @property (nonatomic, strong) NSString *summary;
