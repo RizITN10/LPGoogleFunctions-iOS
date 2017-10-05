@@ -857,7 +857,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     [parameters setObject:[LPDistanceMatrix getDistanceMatrixTravelMode:travelMode] forKey:@"mode"];
-    //    [parameters setObject:@"pessimistic" forKey:@"traffic_model"]; // , optimistic
+    //        [parameters setObject:@"pessimistic" forKey:@"traffic_model"]; // , optimistic
     
     if ([[LPDistanceMatrix getDistanceMatrixAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDistanceMatrix getDistanceMatrixAvoid:avoid] forKey:@"avoid"];
@@ -931,9 +931,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%f,%f", origin.latitude, origin.longitude] forKey:@"origin"];
     [parameters setObject:[NSString stringWithFormat:@"%f,%f", destination.latitude, destination.longitude] forKey:@"destination"];
     //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
-    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    [parameters setObject:@"en" forKey:@"language"];
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
-    //    [parameters setObject:@"optimistic" forKey:@"traffic_model"];
+    //        [parameters setObject:@"pessimistic" forKey:@"traffic_model"];
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDirections getDirectionsAvoid:avoid] forKey:@"avoid"];
     }
@@ -942,7 +942,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     if (departureTime) {
         [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
-//        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
+        //        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
     }
     
     if (arrivalTime) {
@@ -957,7 +957,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
             
             if (i < waypoints.count - 1) {
-                waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f%%7C", waypoint.location.latitude, waypoint.location.longitude];
+                waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f%%7C", waypoint.location.latitude, waypoint.location.longitude];// 0.7f
             } else {
                 
                 waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f", waypoint.location.latitude, waypoint.location.longitude];
@@ -1033,9 +1033,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:origin forKey:@"origin"];
     [parameters setObject:destination forKey:@"destination"];
     //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
-    //    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    [parameters setObject:@"en" forKey:@"language"]; // self.languageCode
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
-    //        [parameters setObject:@"optimistic" forKey:@"traffic_model"];
+    //            [parameters setObject:@"pessimistic" forKey:@"traffic_model"];
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDirections getDirectionsAvoid:avoid] forKey:@"avoid"];
     }
@@ -1046,13 +1046,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         
         //        NSLog(@"Milliseconds: %@, Seconds: %@", [NSString stringWithFormat:@"%lli", [@(floor([departureTime timeIntervalSince1970] * 1000)) longLongValue]], [NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]]);
         [parameters setObject:[NSString stringWithFormat:@"%.0f", [departureTime timeIntervalSince1970]] forKey:@"departure_time"];
-//        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
+        //        [parameters setObject:[NSString stringWithFormat:@"%lli", (long long)([[NSDate date] timeIntervalSince1970] * 1000.0)] forKey:@"departure_time"];
     }
     
     if (arrivalTime) {
         [parameters setObject:[NSString stringWithFormat:@"%.0f", [arrivalTime timeIntervalSince1970]] forKey:@"arrival_time"];
     }
-
+    
     if (waypoints.count > 0) {
         NSString *waypointsString = @"";
         
@@ -1066,18 +1066,18 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         
         [parameters setObject:waypointsString forKey:@"waypoints"];
     }
-
-//    if (waypoints.count > 0) {
-//        NSString *waypointsString = @"";
-//        \
-//        for (int i=0; i<[waypoints count]; i++) {
-//            LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
-//            
-//            waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f|", waypoint.location.latitude, waypoint.location.longitude];
-//        }
-//        
-//        [parameters setObject:waypointsString forKey:@"waypoints"];
-//    }
+    
+    //    if (waypoints.count > 0) {
+    //        NSString *waypointsString = @"";
+    //        \
+    //        for (int i=0; i<[waypoints count]; i++) {
+    //            LPWaypoint *waypoint = (LPWaypoint *)[waypoints objectAtIndex:i];
+    //
+    //            waypointsString = [waypointsString stringByAppendingFormat:@"%f,%f|", waypoint.location.latitude, waypoint.location.longitude];
+    //        }
+    //
+    //        [parameters setObject:waypointsString forKey:@"waypoints"];
+    //    }
     
     NSMutableString *urlString = [NSMutableString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIDirectionsURLPath];
     for (NSString *key in parameters) {
