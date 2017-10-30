@@ -820,7 +820,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 #pragma mark - Added methods for custom usage
 
-- (void)loadDistanceMatrixForOrigins:(NSArray *)origins forDestinations:(NSArray *)destinations directionsTravelMode:(LPGoogleDistanceMatrixTravelMode)travelMode directionsAvoidTolls:(LPGoogleDistanceMatrixAvoid)avoid directionsUnit:(LPGoogleDistanceMatrixUnit)unit departureTime:(NSDate *)departureTime successfulBlock:(void (^)(LPDistanceMatrix *distanceMatrix))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
+- (void)loadDistanceMatrixForOrigins:(NSArray *)origins forDestinations:(NSArray *)destinations directionsTravelMode:(LPGoogleDistanceMatrixTravelMode)travelMode directionsAvoidTolls:(LPGoogleDistanceMatrixAvoid)avoid directionsUnit:(LPGoogleDistanceMatrixUnit)unit departureTime:(NSDate *)departureTime trafficModel:(NSString *)trafficModel successfulBlock:(void (^)(LPDistanceMatrix *distanceMatrix))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -857,7 +857,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     [parameters setObject:[LPDistanceMatrix getDistanceMatrixTravelMode:travelMode] forKey:@"mode"];
-    //        [parameters setObject:@"pessimistic" forKey:@"traffic_model"]; // , optimistic
+    [parameters setObject:trafficModel forKey:@"traffic_model"];
     
     if ([[LPDistanceMatrix getDistanceMatrixAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDistanceMatrix getDistanceMatrixAvoid:avoid] forKey:@"avoid"];
@@ -917,7 +917,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }];
 }
 
-- (void)loadDirectionsForOrigin:(LPLocation *)origin forDestination:(LPLocation *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure {
+- (void)loadDirectionsForOrigin:(LPLocation *)origin forDestination:(LPLocation *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints trafficModel:(NSString *)trafficModel successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure {
     
     if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadDirections:)]) {
         [self.delegate googleFunctionsWillLoadDirections:self];
@@ -933,7 +933,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
     [parameters setObject:@"en" forKey:@"language"];
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
-    //        [parameters setObject:@"pessimistic" forKey:@"traffic_model"];
+    [parameters setObject:trafficModel forKey:@"traffic_model"]; // , optimistic
+    
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDirections getDirectionsAvoid:avoid] forKey:@"avoid"];
     }
@@ -981,7 +982,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    NSLog(@"URLString: %@", urlString);
+    if (parameters[@"waypoints"]) {
+        NSLog(@"URLString: %@", urlString);
+    }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
@@ -1018,7 +1021,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }];
 }
 
-- (void)loadDirectionsForOriginFromAddress:(NSString *)origin forDestination:(NSString *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure {
+- (void)loadDirectionsForOriginFromAddress:(NSString *)origin forDestination:(NSString *)destination directionsTravelMode:(LPGoogleDirectionsTravelMode)travelMode directionsAvoidTolls:(LPGoogleDirectionsAvoid)avoid directionsUnit:(LPGoogleDirectionsUnit)unit directionsAlternatives:(BOOL)alternatives departureTime:(NSDate *)departureTime arrivalTime:(NSDate *)arrivalTime waypoints:(NSArray *)waypoints trafficModel:(NSString *)trafficModel successfulBlock:(void (^)(LPDirections *directions))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure {
     
     if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadDirectionsForAddress:)]) {
         [self.delegate googleFunctionsWillLoadDirectionsForAddress:self];
@@ -1035,7 +1038,8 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
     [parameters setObject:@"en" forKey:@"language"]; // self.languageCode
     [parameters setObject:[LPStep getDirectionsTravelMode:travelMode] forKey:@"mode"];
-    //            [parameters setObject:@"pessimistic" forKey:@"traffic_model"];
+    [parameters setObject:trafficModel forKey:@"traffic_model"];
+    
     if ([[LPDirections getDirectionsAvoid:avoid] length] != 0) {
         [parameters setObject:[LPDirections getDirectionsAvoid:avoid] forKey:@"avoid"];
     }
@@ -1318,3 +1322,4 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 }
 
 @end
+
