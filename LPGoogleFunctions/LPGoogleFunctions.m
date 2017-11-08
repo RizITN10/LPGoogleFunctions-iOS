@@ -540,11 +540,15 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadGeocoding:self forAddress:address filterComponents:filterComponents];
     }
     
-    NSMutableDictionary *parameters = [NSMutableDictionary new];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    [parameters setObject:[NSString stringWithFormat:@"%@", address] forKey:@"address"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
-    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
+    
+    [parameters setObject:address forKey:@"place_id"];
+    //    [parameters setObject:address forKey:@"address"];
+    [parameters setObject:self.sensor ? @"true" : @"false" forKey:@"sensor"];
+    [parameters setObject:self.languageCode forKey:@"language"];
     
     if ([filterComponents count] > 0) {
         NSString *comString = @"components=";
@@ -556,19 +560,80 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         }
     }
     
-    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:googleAPIGeocodingURLPath parameters:parameters error:nil];
+    NSMutableString *urlString = [NSMutableString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIGeocodingURLPath];
+    for (NSString *key in parameters) {
+        [urlString appendString:[NSString stringWithFormat:@"%@=%@&", key, parameters[key]]];
+    }
     
-    [self loadGeocodingRequest:request successfulBlock:^(LPGeocodingResults *geocodingResults) {
+    if (self.googleAPIBrowserKey) {
+        [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"key", [NSString stringWithFormat:@"%@", self.googleAPIBrowserKey]]];
+    }
+    else {
+        [urlString appendString:[NSString stringWithFormat:@"%@=%@", @"client", [NSString stringWithFormat:@"%@", self.googleAPIClientID]]];
+        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
+    }
+    
+    NSLog(@"URLString: %@", urlString);
+    
+    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        if (successful)
-            successful(geocodingResults);
         
-    } failureBlock:^(LPGoogleStatus status) {
+        LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
+        
+        LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:results.statusCode];
+        
+        NSString *statusCode = results.statusCode;
+        
+        if (status == LPGoogleStatusOK) {
+            
+            if ([self.delegate respondsToSelector:@selector(googleFunctions:didLoadGeocodingResults:)]) {
+                [self.delegate googleFunctions:self didLoadGeocodingResults:results];
+            }
+            if (successful)
+                successful(results);
+        } else {
+            LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:statusCode];
+            
+            if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
+                [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:status];
+            }
+            
+            if (failure)
+                failure(status);
+        }
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
+            [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
+        }
         
         if (failure)
-            failure(status);
+            failure(LPGoogleStatusUnknownError);
+        
+        //        if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDirectionsWithStatus:)]) {
+        //            [self.delegate googleFunctions:self errorLoadingDirectionsWithStatus:LPGoogleStatusUnknownError];
+        //        }
+        //
+        //        if (failure)
+        //            failure(LPGoogleStatusUnknownError, [error localizedDescription]);
         
     }];
+    
+    
+    //    NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:googleAPIGeocodingURLPath parameters:parameters error:nil];
+    //
+    //    [self loadGeocodingRequest:request successfulBlock:^(LPGeocodingResults *geocodingResults) {
+    //
+    //        if (successful)
+    //            successful(geocodingResults);
+    //
+    //    } failureBlock:^(LPGoogleStatus status) {
+    //
+    //        if (failure)
+    //            failure(status);
+    //
+    //    }];
 }
 
 - (void)loadGeocodingForLocation:(LPLocation *)location filterComponents:(NSArray *)filterComponents successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure
@@ -982,9 +1047,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    if (parameters[@"waypoints"]) {
-        NSLog(@"URLString: %@", urlString);
-    }
+    //    if (parameters[@"waypoints"]) {
+    //        NSLog(@"URLString: %@", urlString);
+    //    }
     
     [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
