@@ -12,13 +12,13 @@
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-	self = [LPGeocodingResults new];
+    self = [LPGeocodingResults new];
     if (self) {
         self.results = [coder decodeObjectForKey:@"results"];
         self.statusCode = [coder decodeObjectForKey:@"statusCode"];
-	}
-	
-	return self;
+    }
+    
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -30,7 +30,7 @@
 + (id)geocodingResultsWithObjects:(NSDictionary *)dictionary
 {
     LPGeocodingResults *new = [LPGeocodingResults new];
-
+    
     if (![dictionary isKindOfClass:[NSNull class]]) {
         if (![[dictionary objectForKey:@"results"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"results"]) {
             NSMutableArray *array = [NSMutableArray new];
@@ -46,6 +46,10 @@
         
         if (![[dictionary objectForKey:@"status"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"status"]) {
             new.statusCode = [NSString stringWithFormat:@"%@", [dictionary objectForKey:@"status"]];
+        }
+        
+        if (![[dictionary objectForKey:@"error_message"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"error_message"]) {
+            new.errorMessage = [NSString stringWithFormat:@"%@", [dictionary objectForKey:@"error_message"]];
         }
     }
     
@@ -89,3 +93,4 @@
 }
 
 @end
+

@@ -190,6 +190,8 @@ typedef enum {
  */
 - (void)loadGeocodingForAddress:(NSString *)address filterComponents:(NSArray *)filterComponents successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 
+- (void)loadGeocodingForPlaceID:(NSString *)placeID filterComponents:(NSArray *)filterComponents successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure;
+
 /**
  * Geocoding is the process of converting addresses (like "1600 Amphitheatre Parkway, Mountain View, CA") into geographic coordinates (like latitude 37.423021 and longitude -122.083739), which you can use to place markers or position the map.
  * @param The location that you want to geocode.
@@ -197,7 +199,7 @@ typedef enum {
  * @param Successful block with results.
  * @param Failure block with status.
  */
-- (void)loadGeocodingForLocation:(LPLocation *)location filterComponents:(NSArray *)filterComponents successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
+- (void)loadGeocodingForLocation:(LPLocation *)location filterComponents:(NSArray *)filterComponents successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure;
 
 /**
  * The Google Places Autocomplete API is a web service that returns Place information based on text search terms, and, optionally, geographic bounds.
@@ -287,6 +289,7 @@ typedef enum {
 
 #pragma mark - Geocoding
 - (void)googleFunctionsWillLoadGeocoding:(LPGoogleFunctions *)googleFunctions forAddress:(NSString *)address filterComponents:(NSArray *)filterComponents;
+- (void)googleFunctionsWillLoadGeocoding:(LPGoogleFunctions *)googleFunctions forPlaceID:(NSString *)placeID filterComponents:(NSArray *)filterComponents;
 - (void)googleFunctionsWillLoadGeocoding:(LPGoogleFunctions *)googleFunctions forLocation:(LPLocation *)location filterComponents:(NSArray *)filterComponents;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions errorLoadingGeocodingWithStatus:(LPGoogleStatus)status;
 - (void)googleFunctions:(LPGoogleFunctions *)googleFunctions didLoadGeocodingResults:(LPGeocodingResults *)geocodingResults;

@@ -13,6 +13,7 @@
 
 @property (nonatomic, strong) NSArray *results;
 @property (nonatomic, strong) NSString *statusCode;
+@property (nonatomic, strong) NSString *errorMessage;
 
 + (id)geocodingResultsWithObjects:(NSDictionary *)dictionary;
 
@@ -21,3 +22,4 @@
 - (id)copyWithZone:(NSZone *)zone;
 
 @end
+
