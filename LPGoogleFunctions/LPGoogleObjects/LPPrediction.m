@@ -23,24 +23,26 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-	self = [LPPrediction new];
+    self = [LPPrediction new];
     if (self) {
         self.name = [coder decodeObjectForKey:@"name"];
         self.ID = [coder decodeObjectForKey:@"ID"];
+        self.placeID = [coder decodeObjectForKey:@"placeID"];
         self.number = [coder decodeIntForKey:@"number"];
         self.reference = [coder decodeObjectForKey:@"reference"];
         self.types = [coder decodeObjectForKey:@"types"];
         self.terms = [coder decodeObjectForKey:@"terms"];
         self.matchedSubstrings = [coder decodeObjectForKey:@"matchedSubstrings"];
-	}
-	
-	return self;
+    }
+    
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeObject:self.name forKey:@"name"];
     [coder encodeObject:self.ID forKey:@"ID"];
+    [coder encodeObject:self.placeID forKey:@"placeID"];
     [coder encodeInt:self.number forKey:@"number"];
     [coder encodeObject:self.reference forKey:@"reference"];
     [coder encodeObject:self.types forKey:@"types"];
@@ -51,7 +53,7 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
 + (id)predicationWithObjects:(NSDictionary *)dictionary
 {
     LPPrediction *new = [LPPrediction new];
-
+    
     if (![dictionary isKindOfClass:[NSNull class]])
     {
         if (![[dictionary objectForKey:@"description"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"description"]) {
@@ -60,6 +62,10 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
         
         if (![[dictionary objectForKey:@"id"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"id"]) {
             new.ID=[dictionary objectForKey:@"id"];
+        }
+        
+        if (![[dictionary objectForKey:@"place_id"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"place_id"]) {
+            new.placeID=[dictionary objectForKey:@"place_id"];
         }
         
         if (![[dictionary objectForKey:@"number"] isKindOfClass:[NSNull class]] && [dictionary objectForKey:@"number"]) {
@@ -110,7 +116,7 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
 
 - (NSDictionary *)dictionary
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[self dictionaryWithValuesForKeys:[NSArray arrayWithObjects:@"name", @"ID", @"number", @"reference", nil]]];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithDictionary:[self dictionaryWithValuesForKeys:[NSArray arrayWithObjects:@"name", @"ID", @"placeID", @"number", @"reference", nil]]];
     
     if (self.types && ![self.types isKindOfClass:[NSNull class]]) {
         NSMutableArray *array = [NSMutableArray new];
@@ -207,6 +213,7 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
     
     [new setName:[self name]];
     [new setID:[self ID]];
+    [new setPlaceID:[self placeID]];
     [new setNumber:[self number]];
     [new setReference:[self reference]];
     [new setTypes:[self types]];
@@ -217,3 +224,4 @@ NSString *const PLACE_TYPE_ADMINISTRATIVE_AREA3 = @"administrative_area_level_3"
 }
 
 @end
+

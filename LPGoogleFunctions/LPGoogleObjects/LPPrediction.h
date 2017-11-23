@@ -28,6 +28,7 @@ typedef enum {
 
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *ID;
+@property (nonatomic, strong) NSString *placeID;
 @property (nonatomic, assign) int number;
 @property (nonatomic, strong) NSString *reference;
 @property (nonatomic, strong) NSArray *types;
@@ -44,3 +45,4 @@ typedef enum {
 - (id)copyWithZone:(NSZone *)zone;
 
 @end
+
