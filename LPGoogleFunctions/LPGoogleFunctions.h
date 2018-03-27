@@ -165,8 +165,7 @@ typedef enum {
  * @param Successful block with results.
  * @param Failure block with status.
  */
-- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction successfulBlock:(void (^)(LPPlacesAutocomplete *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
-
+- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction isStrictBounds:(BOOL)isStrictBounds successfulBlock:(void (^)(LPPlacesAutocomplete *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 /**
  * Once you have a reference from a Place Search, you can request more details about a particular establishment or point of interest by initiating a Place Details request. A Place Details request returns more comprehensive information about the indicated place such as its complete address, phone number, user rating and reviews.
  * @param A textual identifier that uniquely identifies a place, returned from a Place search.

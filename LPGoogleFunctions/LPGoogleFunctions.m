@@ -296,7 +296,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }];
 }
 
-- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction successfulBlock:(void (^)(LPPlacesAutocomplete *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure
+- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction isStrictBounds:(BOOL)isStrictBounds successfulBlock:(void (^)(LPPlacesAutocomplete *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
     if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadPlacesAutocomplete:forInput:)]) {
         [self.delegate googleFunctionsWillLoadPlacesAutocomplete:self forInput:input];
@@ -312,6 +312,10 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     else {
         [parameters setObject:[NSString stringWithFormat:@"%@", self.googleAPIClientID] forKey:@"client"];
+    }
+    
+    if (isStrictBounds) {
+        [parameters setObject:@"" forKey:@"strictbounds"];
     }
     
     [parameters setObject:[NSString stringWithFormat:@"%@", input] forKey:@"input"];
