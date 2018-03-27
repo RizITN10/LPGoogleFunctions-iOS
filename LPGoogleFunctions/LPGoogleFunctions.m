@@ -774,9 +774,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [[NSOperationQueue mainQueue] addOperation:requestOperation];
 }
 
-- (void)loadPlacesAutocompleteWithDetailsForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction successfulBlock:(void (^)(NSArray *placesWithDetails))successful failureBlock:(void (^)(LPGoogleStatus status))failure
+- (void)loadPlacesAutocompleteWithDetailsForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction isStrictBounds:(BOOL)isStrictBounds successfulBlock:(void (^)(NSArray *placesWithDetails))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
-    [self loadPlacesAutocompleteForInput:input offset:offset radius:radius location:location placeType:placeType countryRestriction:countryRestriction successfulBlock:^(LPPlacesAutocomplete *placesAutocomplete) {
+    [self loadPlacesAutocompleteForInput:input offset:offset radius:radius location:location placeType:placeType countryRestriction:countryRestriction isStrictBounds:isStrictBounds successfulBlock:^(LPPlacesAutocomplete *placesAutocomplete) {
         
         __block int whichLoaded = 0;
         NSMutableArray *array = [NSMutableArray new];
