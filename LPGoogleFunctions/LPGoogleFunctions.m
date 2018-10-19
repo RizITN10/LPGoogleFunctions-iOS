@@ -159,7 +159,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadStreetViewImageForLocation:(LPLocation *)location imageSize:(CGSize)size heading:(float)heading fov:(float)fov pitch:(float)pitch successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -178,12 +178,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%.2f", fov] forKey:@"fov"];
     [parameters setObject:[NSString stringWithFormat:@"%.2f", pitch] forKey:@"pitch"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath]  parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath]  parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         if (successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if (failure)
             failure(error);
@@ -193,7 +193,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadStreetViewImageForAddress:(NSString *)address imageSize:(CGSize)size heading:(float)heading fov:(float)fov pitch:(float)pitch successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -213,12 +213,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%.2f", fov] forKey:@"fov"];
     [parameters setObject:[NSString stringWithFormat:@"%.2f", pitch] forKey:@"pitch"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         if (successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if (failure)
             failure(error);
@@ -228,7 +228,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadStaticMapImageForLocation:(LPLocation *)location zoomLevel:(int)zoom imageSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype markersArray:(NSArray *)markers successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -248,12 +248,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     [parameters setObject:parametersMarkers forKey:@"markers"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         if(successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if(failure)
             failure(error);
@@ -263,7 +263,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadStaticMapImageForAddress:(NSString *)address zoomLevel:(int)zoom imageSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype markersArray:(NSArray *)markers successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -283,12 +283,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     [parameters setObject:parametersMarkers forKey:@"markers"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         if(successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if(failure)
             failure(error);
@@ -302,7 +302,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadPlacesAutocomplete:self forInput:input];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -326,7 +326,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"country:%@", countryRestriction] forKey:@"components"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPPlacesAutocomplete *placesAutocomplete = [LPPlacesAutocomplete placesAutocompleteWithObjects:responseObject];
         
@@ -349,7 +349,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:LPGoogleStatusUnknownError];
@@ -367,7 +367,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadNearbyPlaces:self];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -407,7 +407,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //    }
     
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPPlaceSearchResults *placeSearchResults = [LPPlaceSearchResults placeSearchResultsWithObjects:responseObject];
         
@@ -430,7 +430,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingNearbyPlacesWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingNearbyPlacesWithStatus:LPGoogleStatusUnknownError];
@@ -449,7 +449,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadPlaceDetailsResult:self forReference:reference];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -465,7 +465,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPPlaceDetailsResults *placeDetailsResults = [LPPlaceDetailsResults placeDetailsResultsWithObjects:responseObject];
         
@@ -489,7 +489,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceDetailsResultWithStatus:LPGoogleStatusUnknownError];
@@ -505,7 +505,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 {
     [googlePlayer stop];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -513,7 +513,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"tl"];
     [parameters setObject:[NSString stringWithFormat:@"%@", text] forKey:@"q"];
     
-    [manager GET:googleAPITextToSpeechURL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:googleAPITextToSpeechURL parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         NSError *error = nil;
         
@@ -526,7 +526,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(error);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if(failure)
             failure(error);
@@ -577,7 +577,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadGeocoding:self forPlaceID:placeID filterComponents:filterComponents];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -611,7 +611,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     NSLog(@"URLString: %@", urlString);
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
@@ -637,7 +637,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status, results.errorMessage);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
@@ -654,7 +654,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadGeocoding:self forLocation:location filterComponents:filterComponents];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -690,7 +690,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     NSLog(@"URLString: %@", urlString);
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
@@ -716,7 +716,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status, results.errorMessage);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
@@ -729,10 +729,10 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadGeocodingRequest:(NSMutableURLRequest *)request successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
-    AFHTTPRequestOperation *requestOperation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+    NSURLSessionTask *requestOperation = [[NSURLSessionTask alloc] initWithRequest:request];
     requestOperation.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    [requestOperation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [requestOperation setCompletionBlockWithSuccess:^(NSURLSessionTask *operation, id responseObject) {
         
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
@@ -756,7 +756,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
@@ -840,7 +840,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadPlaceSearch:self forQuery:query];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -862,7 +862,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceTextSearchURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceTextSearchURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPPlaceSearchResults *placeDetailsResults = [LPPlaceSearchResults placeSearchResultsWithObjects:responseObject];
         
@@ -886,7 +886,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlaceSearchWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceSearchWithStatus:LPGoogleStatusUnknownError];
@@ -900,7 +900,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadPlacePhotoForReference:(NSString *)reference maxHeight:(int)maxHeight maxWidth:(int)maxWidth successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -924,12 +924,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"%d", maxWidth] forKey:@"maxwidth"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacePhotoURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacePhotoURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         if(successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if (failure)
             failure(error);
@@ -941,7 +941,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadDistanceMatrixForOrigins:(NSArray *)origins forDestinations:(NSArray *)destinations directionsTravelMode:(LPGoogleDistanceMatrixTravelMode)travelMode directionsAvoidTolls:(LPGoogleDistanceMatrixAvoid)avoid directionsUnit:(LPGoogleDistanceMatrixUnit)unit departureTime:(NSDate *)departureTime trafficModel:(NSString *)trafficModel successfulBlock:(void (^)(LPDistanceMatrix *distanceMatrix))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -1001,7 +1001,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPDistanceMatrix *distanceMatrix = [LPDistanceMatrix distanceMatrixWithObjects:responseObject];
         distanceMatrix.requestTravelMode = travelMode;
@@ -1024,7 +1024,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDistanceMatrixWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDistanceMatrixWithStatus:LPGoogleStatusUnknownError];
@@ -1042,7 +1042,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadDirections:self];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -1105,7 +1105,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //        NSLog(@"URLString: %@", urlString);
     //    }
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPDirections *directions = [LPDirections directionsWithObjects:responseObject];
         directions.requestTravelMode = travelMode;
@@ -1128,7 +1128,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status, directions.errorMessage);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDirectionsWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDirectionsWithStatus:LPGoogleStatusUnknownError];
@@ -1146,7 +1146,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadDirectionsForAddress:self];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     OrderedDictionary *parameters = [[OrderedDictionary alloc] init];
@@ -1218,7 +1218,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     NSLog(@"URLString: %@", urlString);
     
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPDirections *directions = [LPDirections directionsWithObjects:responseObject];
         directions.requestTravelMode = travelMode;
@@ -1241,7 +1241,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status, directions.errorMessage);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDirectionsWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDirectionsWithStatus:LPGoogleStatusUnknownError];
@@ -1255,7 +1255,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadStaticMapImageWithSize:(CGSize)size imageScale:(int)scale mapType:(LPGoogleMapType)maptype sourceMarker:(NSString *)sourceMarker destMarker:(NSString *)destMarker path:(NSString *)path format:(NSString *)format successfulBlock:(void (^)(UIImage *image))successful failureBlock:(void (^)(NSError *error))failure {
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFImageResponseSerializer serializer];
     
@@ -1293,12 +1293,12 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
         
         if(successful)
             successful(responseObject);
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if(failure)
             failure(error);
@@ -1311,7 +1311,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadPlacesAutocomplete:self forInput:input];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -1336,7 +1336,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"country:%@", countryRestriction] forKey:@"components"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         NSDictionary *dictionary = responseObject;
         
@@ -1369,7 +1369,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                     failure(status);
             }
         }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:LPGoogleStatusUnknownError];
@@ -1386,7 +1386,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [self.delegate googleFunctionsWillLoadPlaceDetailsResult:self forPlaceID:placeID];
     }
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
     NSMutableDictionary *parameters = [NSMutableDictionary new];
@@ -1404,7 +1404,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", placeID] forKey:@"placeid"];
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
         
         LPPlaceDetailsResults *placeDetailsResults = [LPPlaceDetailsResults placeDetailsResultsWithObjects:responseObject];
         
@@ -1428,7 +1428,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                 failure(status);
         }
         
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
         
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceDetailsResultWithStatus:LPGoogleStatusUnknownError];
