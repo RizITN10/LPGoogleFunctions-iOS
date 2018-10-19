@@ -178,16 +178,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%.2f", fov] forKey:@"fov"];
     [parameters setObject:[NSString stringWithFormat:@"%.2f", pitch] forKey:@"pitch"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath]  parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
-        
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (failure)
             failure(error);
-        
     }];
 }
 
@@ -213,16 +210,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%.2f", fov] forKey:@"fov"];
     [parameters setObject:[NSString stringWithFormat:@"%.2f", pitch] forKey:@"pitch"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStreetViewImageURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (failure)
             failure(error);
-        
     }];
 }
 
@@ -248,16 +243,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     [parameters setObject:parametersMarkers forKey:@"markers"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
-        
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath]     parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if(successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if(failure)
             failure(error);
-        
     }];
 }
 
@@ -283,16 +275,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     [parameters setObject:parametersMarkers forKey:@"markers"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIStaticMapImageURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if(successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if(failure)
             failure(error);
-        
     }];
 }
 
@@ -330,8 +320,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"country:%@", countryRestriction] forKey:@"components"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPPlacesAutocomplete *placesAutocomplete = [LPPlacesAutocomplete placesAutocompleteWithObjects:responseObject];
         
         NSString *statusCode = placesAutocomplete.statusCode;
@@ -353,15 +344,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
@@ -410,9 +399,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //        [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_OEM_Places:urlString]]];
     //    }
     
-    
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPPlaceSearchResults *placeSearchResults = [LPPlaceSearchResults placeSearchResultsWithObjects:responseObject];
         
         NSString *statusCode = placeSearchResults.statusCode;
@@ -434,18 +423,15 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingNearbyPlacesWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingNearbyPlacesWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
-
 
 - (void)loadPlaceDetailsForReference:(NSString *)reference successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
@@ -469,8 +455,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", self.sensor ? @"true" : @"false"] forKey:@"sensor"];
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPPlaceDetailsResults *placeDetailsResults = [LPPlaceDetailsResults placeDetailsResultsWithObjects:responseObject];
         
         NSString *statusCode = placeDetailsResults.statusCode;
@@ -492,16 +479,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceDetailsResultWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
@@ -517,8 +501,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"tl"];
     [parameters setObject:[NSString stringWithFormat:@"%@", text] forKey:@"q"];
     
-    [manager GET:googleAPITextToSpeechURL parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:googleAPITextToSpeechURL parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSError *error = nil;
         
         googlePlayer = [[AVAudioPlayer alloc] initWithData:responseObject error:&error];
@@ -529,12 +514,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if(failure)
                 failure(error);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if(failure)
             failure(error);
-        
     }];
 }
 
@@ -614,9 +596,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     
     NSLog(@"URLString: %@", urlString);
-    
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
         LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:results.statusCode];
@@ -640,9 +622,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status, results.errorMessage);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
         }
@@ -693,9 +673,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }
     
     NSLog(@"URLString: %@", urlString);
-    
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
         LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:results.statusCode];
@@ -719,9 +699,7 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status, results.errorMessage);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
         }
@@ -733,11 +711,11 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
 
 - (void)loadGeocodingRequest:(NSMutableURLRequest *)request successfulBlock:(void (^)(LPGeocodingResults *geocodingResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure
 {
-    NSURLSessionTask *requestOperation = [[NSURLSessionTask alloc] initWithRequest:request];
-    requestOperation.responseSerializer = [AFJSONResponseSerializer serializer];
+    AFHTTPSessionManager *requestOperation = [AFHTTPSessionManager manager];
     
-    [requestOperation setCompletionBlockWithSuccess:^(NSURLSessionTask *operation, id responseObject) {
+    [requestOperation GET:request.URL.absoluteString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPGeocodingResults *results = [LPGeocodingResults geocodingResultsWithObjects:responseObject];
         
         NSString *statusCode = results.statusCode;
@@ -759,19 +737,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingGeocodingWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingGeocodingWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
-    
-    [[NSOperationQueue mainQueue] addOperation:requestOperation];
 }
 
 - (void)loadPlacesAutocompleteWithDetailsForInput:(NSString *)input offset:(int)offset radius:(int)radius location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction isStrictBounds:(BOOL)isStrictBounds successfulBlock:(void (^)(NSArray *placesWithDetails))successful failureBlock:(void (^)(LPGoogleStatus status))failure
@@ -865,9 +838,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"%d", radius] forKey:@"radius"];
     }
     
-    
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceTextSearchURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceTextSearchURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPPlaceSearchResults *placeDetailsResults = [LPPlaceSearchResults placeSearchResultsWithObjects:responseObject];
         
         NSString *statusCode = placeDetailsResults.statusCode;
@@ -889,16 +862,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlaceSearchWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceSearchWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
@@ -928,16 +898,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"%d", maxWidth] forKey:@"maxwidth"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacePhotoURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacePhotoURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if(successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if (failure)
             failure(error);
-        
     }];
 }
 
@@ -1005,8 +973,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPDistanceMatrix *distanceMatrix = [LPDistanceMatrix distanceMatrixWithObjects:responseObject];
         distanceMatrix.requestTravelMode = travelMode;
         
@@ -1027,16 +996,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDistanceMatrixWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDistanceMatrixWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
@@ -1109,8 +1075,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     //        NSLog(@"URLString: %@", urlString);
     //    }
     
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPDirections *directions = [LPDirections directionsWithObjects:responseObject];
         directions.requestTravelMode = travelMode;
         
@@ -1131,16 +1098,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status, directions.errorMessage);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDirectionsWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDirectionsWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError, [error localizedDescription]);
-        
     }];
 }
 
@@ -1221,9 +1185,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     
     NSLog(@"URLString: %@", urlString);
     
-    
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPDirections *directions = [LPDirections directionsWithObjects:responseObject];
         directions.requestTravelMode = travelMode;
         
@@ -1244,16 +1208,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status, directions.errorMessage);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingDirectionsWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingDirectionsWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError, [error localizedDescription]);
-        
     }];
 }
 
@@ -1297,16 +1258,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [urlString appendString:[NSString stringWithFormat:@"&%@=%@", @"signature", [self calculateSignatureForURLString_ASSET:urlString]]];
     }
     
-    [manager GET:urlString parameters:nil success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:urlString parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if(successful)
             successful(responseObject);
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if(failure)
             failure(error);
-        
     }];
 }
 
@@ -1340,8 +1299,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
         [parameters setObject:[NSString stringWithFormat:@"country:%@", countryRestriction] forKey:@"components"];
     }
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSDictionary *dictionary = responseObject;
         
         if ([dictionary isKindOfClass:[NSNull class]]
@@ -1373,15 +1333,13 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
                     failure(status);
             }
         }
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
@@ -1408,8 +1366,9 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     [parameters setObject:[NSString stringWithFormat:@"%@", placeID] forKey:@"placeid"];
     [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
     
-    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters success:^(NSURLSessionTask *operation, id responseObject) {
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlaceDetailsURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
         
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         LPPlaceDetailsResults *placeDetailsResults = [LPPlaceDetailsResults placeDetailsResultsWithObjects:responseObject];
         
         NSString *statusCode = placeDetailsResults.statusCode;
@@ -1431,18 +1390,14 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
             if (failure)
                 failure(status);
         }
-        
-    } failure:^(NSURLSessionTask *operation, NSError *error) {
-        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
             [self.delegate googleFunctions:self errorLoadingPlaceDetailsResultWithStatus:LPGoogleStatusUnknownError];
         }
         
         if (failure)
             failure(LPGoogleStatusUnknownError);
-        
     }];
 }
 
 @end
-
