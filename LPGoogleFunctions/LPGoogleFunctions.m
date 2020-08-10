@@ -1349,6 +1349,86 @@ NSString *const googleAPITextToSpeechURL = @"https://translate.google.com/transl
     }];
 }
 
+- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset location:(LPLocation *)location radius:(int)radius isStrictBounds:(BOOL)isStrictBounds placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(NSArray *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
+    if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadPlacesAutocomplete:forInput:)]) {
+        [self.delegate googleFunctionsWillLoadPlacesAutocomplete:self forInput:input];
+    }
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary new];
+    
+    if (browserKey) {
+        [parameters setObject:[NSString stringWithFormat:@"%@", browserKey] forKey:@"key"];
+    }
+    else if (self.googleAPIBrowserKey) {
+        [parameters setObject:[NSString stringWithFormat:@"%@", self.googleAPIBrowserKey] forKey:@"key"];
+    }
+    else {
+        [parameters setObject:[NSString stringWithFormat:@"%@", self.googleAPIClientID] forKey:@"client"];
+    }
+    
+    [parameters setObject:[NSString stringWithFormat:@"%@", input] forKey:@"input"];
+    [parameters setObject:[LPPrediction getStringFromGooglePlaceType:placeType] forKey:@"types"];
+    [parameters setObject:[NSString stringWithFormat:@"%d", offset] forKey:@"offset"];
+    [parameters setObject:[NSString stringWithFormat:@"%f,%f",location.latitude, location.longitude] forKey:@"location"];
+    [parameters setObject:[NSString stringWithFormat:@"%d", radius] forKey:@"radius"];
+    [parameters setObject:[NSString stringWithFormat:@"%@", self.languageCode] forKey:@"language"];
+    
+    if(countryRestriction) {
+        [parameters setObject:[NSString stringWithFormat:@"country:%@", countryRestriction] forKey:@"components"];
+    }
+    
+    if (isStrictBounds) {
+        [parameters setObject:@"" forKey:@"strictbounds"];
+    }
+    
+    [manager GET:[NSString stringWithFormat:@"%@/%@?", googleAPIUri, googleAPIPlacesAutocompleteURLPath] parameters:parameters progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSDictionary *dictionary = responseObject;
+        
+        if ([dictionary isKindOfClass:[NSNull class]]
+            || [[dictionary objectForKey:@"predictions"] isKindOfClass:[NSNull class]]
+            || [[dictionary objectForKey:@"status"] isKindOfClass:[NSNull class]]) {
+            
+            if (failure)
+                failure(LPGoogleStatusUnknownError);
+        }
+        else {
+            
+            NSString *statusCode = dictionary[@"status"];
+            
+            if ([statusCode isEqualToString:@"OK"]) {
+                if ([self.delegate respondsToSelector:@selector(googleFunctions:didLoadPlacesAutocomplete:)]) {
+                    [self.delegate googleFunctions:self didLoadPlacesAutocomplete:dictionary[@"predictions"]];
+                }
+                
+                if (successful)
+                    successful(dictionary[@"predictions"]);
+            } else {
+                LPGoogleStatus status = [LPGoogleFunctions getGoogleStatusFromString:statusCode];
+                
+                if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
+                    [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:status];
+                }
+                
+                if (failure)
+                    failure(status);
+            }
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if ([self.delegate respondsToSelector:@selector(googleFunctions:errorLoadingPlacesAutocompleteWithStatus:)]) {
+            [self.delegate googleFunctions:self errorLoadingPlacesAutocompleteWithStatus:LPGoogleStatusUnknownError];
+        }
+        
+        if (failure)
+            failure(LPGoogleStatusUnknownError);
+    }];
+}
+
+
 - (void)loadPlaceDetailsForPlaceID:(NSString *)placeID forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure {
     if ([self.delegate respondsToSelector:@selector(googleFunctionsWillLoadPlaceDetailsResult:forPlaceID:)]) {
         [self.delegate googleFunctionsWillLoadPlaceDetailsResult:self forPlaceID:placeID];
