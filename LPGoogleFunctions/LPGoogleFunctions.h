@@ -249,6 +249,8 @@ typedef enum {
 
 - (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset location:(LPLocation *)location placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(NSArray *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 
+- (void)loadPlacesAutocompleteForInput:(NSString *)input offset:(int)offset location:(LPLocation *)location radius:(int)radius isStrictBounds:(BOOL)isStrictBounds placeType:(LPGooglePlaceType)placeType countryRestriction:(NSString *)countryRestriction forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(NSArray *placesAutocomplete))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
+
 - (void)loadPlaceDetailsForPlaceID:(NSString *)placeID forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceDetailsResults *placeDetailsResults))successful failureBlock:(void (^)(LPGoogleStatus status))failure;
 
 - (void)loadNearbyPlacesFor:(LPLocation *)origin radius:(NSString *)radius forceBrowserKey:(NSString *)browserKey successfulBlock:(void (^)(LPPlaceSearchResults *placeSearchResults))successful failureBlock:(void (^)(LPGoogleStatus status, NSString *errorMessage))failure;
